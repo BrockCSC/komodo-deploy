@@ -1,0 +1,69 @@
+name: "Komodo Deploy"
+description: "Ensure a Komodo Build + Stack exist, build, and deploy."
+
+inputs:
+  komodo-host:
+    required: true
+  komodo-api-key:
+    required: true
+  komodo-api-secret:
+    required: true
+  build-name:
+    required: true
+    description: "Komodo Build resource name to ensure exists and update."
+  server:
+    required: true
+    description: "Komodo Server name, used as both the Build's builder and the Stack's server."
+  repo:
+    required: true
+    description: "GitHub repo, e.g. owner/name."
+  build-path:
+    required: true
+  dockerfile-path:
+    required: true
+  image-name:
+    required: true
+  branch:
+    required: true
+    description: "Branch to build and deploy from."
+  stack-name:
+    required: true
+    description: "Komodo Stack resource name to ensure exists and deploy."
+  compose-file-paths:
+    required: true
+    description: "Comma-separated compose file paths, e.g. deploy/docker-compose.yml"
+  environment:
+    required: true
+    description: "Multiline KEY=VALUE block for the Stack's environment."
+  git-provider:
+    required: false
+    default: "github.com"
+
+outputs:
+  commit-hash:
+    description: "Commit hash tagged on the built image."
+    value: ${{ steps.deploy.outputs.commit-hash }}
+
+runs:
+  using: composite
+  steps:
+    - run: npm ci --prefix "${{ github.action_path }}/.."
+      shell: bash
+    - id: deploy
+      run: node "${{ github.action_path }}/deploy.mjs"
+      shell: bash
+      env:
+        KOMODO_HOST: ${{ inputs.komodo-host }}
+        KOMODO_API_KEY: ${{ inputs.komodo-api-key }}
+        KOMODO_API_SECRET: ${{ inputs.komodo-api-secret }}
+        BUILD_NAME: ${{ inputs.build-name }}
+        SERVER: ${{ inputs.server }}
+        REPO: ${{ inputs.repo }}
+        BUILD_PATH: ${{ inputs.build-path }}
+        DOCKERFILE_PATH: ${{ inputs.dockerfile-path }}
+        IMAGE_NAME: ${{ inputs.image-name }}
+        BRANCH: ${{ inputs.branch }}
+        STACK_NAME: ${{ inputs.stack-name }}
+        COMPOSE_FILE_PATHS: ${{ inputs.compose-file-paths }}
+        ENVIRONMENT: ${{ inputs.environment }}
+        GIT_PROVIDER: ${{ inputs.git-provider }}

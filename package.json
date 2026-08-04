@@ -1,0 +1,8 @@
+{
+  "name": "komodo-deploy",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "komodo_client": "^2.3.1"
+  }
+}
