@@ -38,6 +38,10 @@ inputs:
   git-provider:
     required: false
     default: "github.com"
+  commit-sha:
+    required: false
+    default: ""
+    description: "Fallback image tag if the Build's commit hash isn't available."
 
 outputs:
   commit-hash:
@@ -67,3 +71,4 @@ runs:
         COMPOSE_FILE_PATHS: ${{ inputs.compose-file-paths }}
         ENVIRONMENT: ${{ inputs.environment }}
         GIT_PROVIDER: ${{ inputs.git-provider }}
+        COMMIT_SHA: ${{ inputs.commit-sha }}

@@ -6,7 +6,9 @@ the Komodo resources they need on first run, so nothing has to be pre-configured
 
 ## `deploy`
 
-Ensures a Komodo `Build` and `Stack` exist, builds the given branch, and deploys the resulting image.
+Ensures a Komodo `Build` and `Stack` exist, builds the given branch, and deploys the resulting image. The Stack's
+`environment` is automatically prefixed with `IMAGE_TAG=<build commit hash>` (falling back to `commit-sha`, then
+`latest`) — don't include `IMAGE_TAG` yourself in the `environment` input.
 
 ```yaml
 - id: deploy-context
@@ -30,6 +32,7 @@ Ensures a Komodo `Build` and `Stack` exist, builds the given branch, and deploys
     stack-name: ${{ steps.deploy-context.outputs.stack-name }}
     compose-file-paths: deploy/docker-compose.yml
     environment: ${{ steps.deploy-context.outputs.environment }}
+    commit-sha: ${{ github.sha }}
 ```
 
 ### Inputs
@@ -48,8 +51,9 @@ Ensures a Komodo `Build` and `Stack` exist, builds the given branch, and deploys
 | `branch`              | yes      | Branch (or tag name) to build and deploy from                        |
 | `stack-name`          | yes      | Komodo Stack resource name (created if missing)                      |
 | `compose-file-paths`  | yes      | Comma-separated, e.g. `deploy/docker-compose.yml`                    |
-| `environment`         | yes      | Multiline `KEY=VALUE` block for the Stack's environment              |
+| `environment`         | yes      | Multiline `KEY=VALUE` block for the Stack's environment (excluding `IMAGE_TAG`) |
 | `git-provider`        | no       | Default `github.com`                                                 |
+| `commit-sha`          | no       | Fallback image tag if the Build's commit hash isn't available        |
 
 ### Outputs
 

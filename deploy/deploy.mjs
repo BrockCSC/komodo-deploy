@@ -45,6 +45,9 @@ if (!buildUpdate.success) {
   throw new Error(`Build failed for ${process.env.BRANCH} - see Build logs in Komodo.`);
 }
 
+const imageTag = buildUpdate.commit_hash || process.env.COMMIT_SHA || "latest";
+const environment = `IMAGE_TAG=${imageTag}\n${process.env.ENVIRONMENT}`;
+
 const stackConfig = {
   server: process.env.SERVER,
   repo: process.env.REPO,
@@ -54,7 +57,7 @@ const stackConfig = {
   auto_pull: false,
   destroy_before_deploy: false,
   webhook_enabled: false,
-  environment: process.env.ENVIRONMENT,
+  environment,
 };
 
 let stackExists = true;
