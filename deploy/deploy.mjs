@@ -42,7 +42,13 @@ if (buildExists) {
 
 const buildUpdate = await komodo.execute_and_poll("RunBuild", { build: process.env.BUILD_NAME });
 if (!buildUpdate.success) {
-  throw new Error(`Build failed for ${process.env.BRANCH} - see Build logs in Komodo.`);
+  for (const log of buildUpdate.logs ?? []) {
+    console.log(`::group::${log.stage}: ${log.command}`);
+    if (log.stdout) console.log(log.stdout);
+    if (log.stderr) console.error(log.stderr);
+    console.log("::endgroup::");
+  }
+  throw new Error(`Build failed for ${process.env.BRANCH} - see logs above.`);
 }
 
 const imageTag = buildUpdate.commit_hash || process.env.COMMIT_SHA || "latest";
@@ -75,7 +81,13 @@ if (stackExists) {
 
 const deployUpdate = await komodo.execute_and_poll("DeployStack", { stack: process.env.STACK_NAME });
 if (!deployUpdate.success) {
-  throw new Error(`Deploy failed for ${process.env.STACK_NAME} - see Stack logs in Komodo.`);
+  for (const log of deployUpdate.logs ?? []) {
+    console.log(`::group::${log.stage}: ${log.command}`);
+    if (log.stdout) console.log(log.stdout);
+    if (log.stderr) console.error(log.stderr);
+    console.log("::endgroup::");
+  }
+  throw new Error(`Deploy failed for ${process.env.STACK_NAME} - see logs above.`);
 }
 
 console.log(`Deployed ${process.env.STACK_NAME} from ${process.env.BRANCH}`);
