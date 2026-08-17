@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="950" viewBox="0 0 850 950" role="img" aria-labelledby="ttl desc">
+  <title id="ttl">How a security report is handled</title>
+  <desc id="desc">A vulnerability is reported privately through the GitHub Security tab, or by email to admin at brockcsc dot ca. A co-president triages it within days rather than hours. The fix lands on main, which is the only supported line. The v1 tag is then moved onto the fixed commit so callers pinned to v1 pick it up, and a GitHub advisory is published with credit. Two panels list what is worth reporting in this repository — secret leakage into logs, outputs or images, environment blocks escaping their Stack, input handling that crosses between callers, and malicious dependencies — and what is not, including Komodo itself, a caller's own hard-coded secrets, and the fact that the actions need an API key at all.</desc>
+
+  <style><![CDATA[
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .m { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; fill: #c05a54; }
+    .title   { font-size: 25px; font-weight: 800; fill: #c05a54; letter-spacing: -0.3px; }
+    .sub     { font-size: 13px; fill: #96969f; }
+    .zone    { font-size: 10.5px; font-weight: 700; letter-spacing: 1.4px; fill: #96969f; }
+    .card    { fill: #80808f; fill-opacity: 0.07; stroke: #8a8a94; stroke-width: 1.5; }
+    .shadow  { fill: #8a8a94; fill-opacity: 0.20; }
+    .h       { font-size: 14px; font-weight: 700; fill: #82828c; }
+    .note    { font-size: 11.5px; fill: #96969f; }
+    .hot     { font-size: 11.5px; font-weight: 700; fill: #c05a54; }
+    .num     { font-size: 11px; font-weight: 800; fill: #c05a54; }
+    .chip    { fill: #c05a54; fill-opacity: 0.10; stroke: #c05a54; stroke-width: 1; stroke-opacity: 0.45; }
+    .flow    { stroke: #c05a54; stroke-width: 2.4; fill: none; stroke-dasharray: 7 9; stroke-linecap: round;
+               animation: flow 1.6s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -32; } }
+    @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+  ]]></style>
+
+  <text class="eyebrow" x="24" y="34">KOMODO-DEPLOY  ·  SECURITY</text>
+  <text class="title" x="24" y="64">From a private report to a moved tag</text>
+  <text class="sub" x="24" y="88">Volunteers, not a security team. No bounty and no SLA — but nothing is left unanswered.</text>
+
+  <text class="zone" x="24" y="122">HOW A REPORT TRAVELS</text>
+  <line x1="24" y1="130" x2="826" y2="130" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.45"/>
+
+  <!-- 1 report -->
+  <rect class="shadow" x="29" y="149" width="797" height="84" rx="11"/>
+  <rect x="24" y="144" width="797" height="84" rx="11" fill="#c05a54" fill-opacity="0.09" stroke="#c05a54" stroke-width="1.8"/>
+  <text class="num" x="40" y="167">01</text><text class="h" x="62" y="167">Report it privately</text>
+  <text class="note" x="40" y="188">Security tab → <tspan class="hot">Report a vulnerability</tspan>. The thread stays private until there is a fix, so nothing is published early.</text>
+  <rect class="chip" x="40" y="200" width="186" height="20" rx="7"/><text class="hot m" x="50" y="214">private reporting: enabled</text>
+  <rect class="chip" x="236" y="200" width="234" height="20" rx="7"/><text class="hot m" x="246" y="214">admin@brockcsc.ca if that fails</text>
+
+  <path class="flow" d="M424 233 L424 253"/><polygon points="424,259 418,247 430,247" fill="#c05a54"/>
+
+  <!-- 2 triage -->
+  <rect class="shadow" x="29" y="272" width="797" height="84" rx="11"/>
+  <rect class="card"   x="24" y="267" width="797" height="84" rx="11"/>
+  <text class="num" x="40" y="290">02</text><text class="h" x="62" y="290">A co-president reads it</text>
+  <text class="note" x="40" y="311">Expect days rather than hours. Nobody is on call, term breaks are real, and the same few people run</text>
+  <text class="note" x="40" y="328">everything else in the club — so you get an honest answer, not a fast one.</text>
+
+  <path class="flow" d="M424 356 L424 376"/><polygon points="424,382 418,370 430,370" fill="#c05a54"/>
+
+  <!-- 3 fix -->
+  <rect class="shadow" x="29" y="395" width="797" height="84" rx="11"/>
+  <rect class="card"   x="24" y="390" width="797" height="84" rx="11"/>
+  <text class="num" x="40" y="413">03</text><text class="h" x="62" y="413">Fix on main</text>
+  <text class="note" x="40" y="434">There is one supported line — whatever <tspan class="m">v1</tspan> currently points at. Nothing is back-ported to older commits,</text>
+  <text class="note" x="40" y="451">which is why this file has no version table.</text>
+
+  <path class="flow" d="M424 479 L424 499"/><polygon points="424,505 418,493 430,493" fill="#c05a54"/>
+
+  <!-- 4 tag and disclose -->
+  <rect class="shadow" x="29" y="518" width="797" height="100" rx="11"/>
+  <rect class="card"   x="24" y="513" width="797" height="100" rx="11"/>
+  <text class="num" x="40" y="536">04</text><text class="h" x="62" y="536">Move the tag, then disclose</text>
+  <text class="note" x="40" y="557"><tspan class="m">v1</tspan> is moved onto the fixed commit, so anything pinned to <tspan class="m">deploy@v1</tspan> or <tspan class="m">ensure-action@v1</tspan> picks the fix up on</text>
+  <text class="note" x="40" y="574">its next run, with no change on the caller's side. Pinning to a commit SHA instead means updating by hand.</text>
+  <text class="note" x="40" y="591">A GitHub advisory follows, crediting you by whatever name you ask for — or by none.</text>
+
+  <text class="zone" x="24" y="658">SCOPE — WHAT THIS REPOSITORY IS</text>
+  <line x1="24" y1="666" x2="826" y2="666" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.45"/>
+
+  <!-- in scope -->
+  <rect class="shadow" x="29" y="693" width="387" height="196" rx="11"/>
+  <rect x="24" y="688" width="387" height="196" rx="11" fill="#c05a54" fill-opacity="0.07" stroke="#c05a54" stroke-width="1.5"/>
+  <text class="h" x="40" y="712" style="fill:#c05a54">WORTH REPORTING HERE</text>
+  <circle cx="44" cy="732" r="2.6" fill="#c05a54"/>
+  <text class="note" x="56" y="736">A path where <tspan class="m">komodo-api-key</tspan> or <tspan class="m">-secret</tspan> can</text>
+  <text class="note" x="56" y="752">reach a workflow log, a step output, or the image</text>
+  <circle cx="44" cy="772" r="2.6" fill="#c05a54"/>
+  <text class="note" x="56" y="776">Anything that makes the <tspan class="m">environment</tspan> block a</text>
+  <text class="note" x="56" y="792">caller passes in readable outside its own Stack</text>
+  <circle cx="44" cy="812" r="2.6" fill="#c05a54"/>
+  <text class="note" x="56" y="816">Input handling that lets one run touch a Build,</text>
+  <text class="note" x="56" y="832">Stack or Action belonging to somebody else</text>
+  <circle cx="44" cy="852" r="2.6" fill="#c05a54"/>
+  <text class="note" x="56" y="856">A dependency of the actions turning malicious</text>
+
+  <!-- out of scope -->
+  <rect class="shadow" x="439" y="693" width="387" height="196" rx="11"/>
+  <rect class="card"   x="434" y="688" width="387" height="196" rx="11"/>
+  <text class="h" x="450" y="712">NOT IN SCOPE</text>
+  <circle cx="454" cy="732" r="2.6" fill="#8a8a94"/>
+  <text class="note" x="466" y="736">Komodo itself, and the instance we happen to</text>
+  <text class="note" x="466" y="752">run — upstream, and admin@brockcsc.ca</text>
+  <circle cx="454" cy="772" r="2.6" fill="#8a8a94"/>
+  <text class="note" x="466" y="776">A caller's own workflow hard-coding a secret</text>
+  <text class="note" x="466" y="792">instead of passing <tspan class="m">secrets.KOMODO_API_KEY</tspan></text>
+  <circle cx="454" cy="812" r="2.6" fill="#8a8a94"/>
+  <text class="note" x="466" y="816">That the actions need an API key with deploy</text>
+  <text class="note" x="466" y="832">rights at all — that is the whole job</text>
+  <circle cx="454" cy="852" r="2.6" fill="#8a8a94"/>
+  <text class="note" x="466" y="856">Findings that assume the server is already owned</text>
+
+  <text class="note" x="24" y="914">Code scanning, Dependabot alerts and secret scanning with push protection run on this repository, and <tspan class="m">main</tspan> is protected.</text>
+  <text class="note" x="24" y="931">Those catch the ordinary things. A human still has to tell us about the rest.</text>
+</svg>
