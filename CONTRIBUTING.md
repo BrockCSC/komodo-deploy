@@ -1,25 +1,24 @@
 # Contributing
 
-Thanks for helping out. This repo is small on purpose: two composite actions, one dependency, no build step.
+Small on purpose: two composite actions, one dependency, no build step.
 
 ## Layout
 
 <img src="docs/img/file-structure.svg" alt="Repository layout: deploy and ensure-action directories each hold an action.yml and a Node script, while package.json and package-lock.json sit at the repository root and are shared by both." width="850">
 
-Each action is a top-level directory, because that is what lets a caller write
+Each action is a top-level directory — that is what lets a caller write
 `BrockCSC/komodo-deploy/<dir>@<ref>`. Everything else is shared.
 
 ## How the actions are wired
 
-Both `action.yml` files are composite actions doing the same two things:
+Both `action.yml` files do the same two things:
 
-1. `npm ci --prefix "${{ github.action_path }}/.."` — note the `/..`. Dependencies install at the **repository
-   root**, not inside the action directory. A `package.json` placed under `deploy/` or `ensure-action/` would be
-   ignored.
-2. `node "${{ github.action_path }}/<script>.mjs"`, with every input passed through as an environment variable.
+1. `npm ci --prefix "${{ github.action_path }}/.."` — note the `/..`. Dependencies install at the
+   **repository root**; a `package.json` under `deploy/` or `ensure-action/` is ignored.
+2. `node "${{ github.action_path }}/<script>.mjs"`, with every input passed through as an env var.
 
-So an input is declared in three places: the `inputs:` block, the `env:` block that maps it to a variable, and the
-script that reads `process.env`. Adding one means touching all three.
+An input therefore lives in three places: the `inputs:` block, the `env:` block mapping it to a
+variable, and the script reading `process.env`. Adding one means touching all three.
 
 ## Shape of the scripts
 
@@ -33,13 +32,13 @@ globalThis.localStorage.setItem ??= (k, v) => globalThis.localStorage.set(k, Str
 const { KomodoClient } = await import("komodo_client");
 ```
 
-`komodo_client` pulls in a browser-oriented auth helper that touches `globalThis.localStorage` when it is imported,
-which plain Node doesn't provide. Keep the shim above the **dynamic** import — a static `import` would be hoisted and
-run first, and throw.
+`komodo_client` pulls in a browser auth helper that touches `globalThis.localStorage` on import,
+which Node lacks. Keep the shim above the **dynamic** import — a static `import` is hoisted, runs
+first, and throws.
 
 ## The upsert pattern
 
-Every resource follows the same shape, and new ones should too:
+Every resource follows this shape, and new ones should too:
 
 ```js
 let exists = true;
@@ -56,10 +55,11 @@ if (exists) {
 }
 ```
 
-This is what makes the actions self-healing: a fresh Komodo instance and a long-running one take the same path, and
-config drift made in the UI is corrected on the next deploy.
+That is what makes the actions self-healing: a fresh Komodo and a long-running one take the same
+path, and drift made in the UI is corrected on the next deploy.
 
-Anything that executes goes through `execute_and_poll`, and a failed update must print its logs before throwing:
+Anything that executes goes through `execute_and_poll`, and a failed update must print its logs
+before throwing — "check the Komodo UI" is not a useful failure:
 
 ```js
 if (!update.success) {
@@ -73,45 +73,43 @@ if (!update.success) {
 }
 ```
 
-A failure that only says "check the Komodo UI" is not a useful failure.
-
 ## Testing a change
 
-There is no test runner and nothing is compiled — what is committed is what runs. That means the only real test is a
-workflow run:
+Nothing is compiled and there is no test runner, so the only real test is a workflow run:
 
 1. Push your branch.
-2. In a consuming repo, point the step at it: `uses: BrockCSC/komodo-deploy/deploy@your-branch`.
-3. Watch the run, and check the resource in Komodo afterwards.
+2. In a consuming repo: `uses: BrockCSC/komodo-deploy/deploy@your-branch`.
+3. Watch the run, then check the resource in Komodo.
 
-Use a throwaway `build-name` and `stack-name` while you do this so you don't reconfigure a live deployment. Because
-the actions upsert, pointing them at an existing resource **will** rewrite its config.
+Use a throwaway `build-name` and `stack-name` — the actions upsert, so pointing them at a live
+resource **will** rewrite its config.
 
 ## Adding an action
 
-A new top-level directory with an `action.yml` and a script, plus a section in the README. Do not add a second
-`package.json`; add the dependency to the root one and commit the updated `package-lock.json`, since `npm ci`
-requires it.
+A new top-level directory with an `action.yml` and a script, plus a README section. Don't add a
+second `package.json`: put the dependency in the root one and commit the updated
+`package-lock.json`, which `npm ci` requires.
 
 ## Releasing
 
-Consumers pin a major tag such as `@v1`, so:
+Consumers pin a major tag such as `@v1`:
 
 - A backwards-compatible change can move the existing major tag.
-- Renaming or removing an input, or changing a default, needs a new major tag. Don't force-push a breaking change
-  onto a tag people are already using.
+- Renaming or removing an input, or changing a default, needs a new major tag. Never force-push a
+  breaking change onto a tag people are using.
 
 ## Docs
 
-The diagrams in `docs/img/` are hand-written SVG, committed as files and referenced with `<img>` — GitHub strips
-inline `<svg>` out of Markdown, so they cannot be embedded directly. They are also served under a strict CSP with
-no scripts, no external images and no web fonts, so keep them self-contained and stick to system font stacks.
+The diagrams in `docs/img/` are hand-written SVG, committed and referenced with `<img>`, because
+GitHub strips inline `<svg>`. A strict CSP blocks scripts, external images and web fonts, so keep
+them self-contained and stick to system font stacks.
 
-They use one flat palette that stays legible on both the light and dark GitHub themes rather than shipping a pair
-per theme, because an SVG's `prefers-color-scheme` follows the operating system and not GitHub's own theme setting;
-the two disagree often enough that a theme-switched diagram is unreadable for those users.
+They use one flat palette legible on both GitHub themes rather than a pair per theme: an SVG's
+`prefers-color-scheme` follows the operating system, not GitHub's setting, and the two disagree
+often enough to make a theme-switched diagram unreadable.
 
-Any animation is CSS `@keyframes`, never SMIL, so that it can be turned off — every animated file carries a
-`prefers-reduced-motion: reduce` rule and is drawn to read correctly when completely still.
+Animation is CSS `@keyframes`, never SMIL, so it can be turned off — every animated file carries
+`prefers-reduced-motion: reduce` and reads correctly when still.
 
-If you change what an action does, update the diagram in the same pull request. A wrong picture is worse than none.
+If you change what an action does, update its diagram in the same pull request. A wrong picture is
+worse than none.

@@ -1,16 +1,17 @@
 # komodo-deploy
 
-Reusable GitHub Actions for deploying apps to a self-hosted [Komodo](https://komo.do) instance. Both actions use the
-official [`komodo_client`](https://www.npmjs.com/package/komodo_client) npm package and are self-healing: they create
-the Komodo resources they need on first run, so nothing has to be pre-configured by hand in the Komodo UI.
+Reusable GitHub Actions that deploy apps to a self-hosted [Komodo](https://komo.do). Both use the
+official [`komodo_client`](https://www.npmjs.com/package/komodo_client) package and are self-healing:
+they create the Komodo resources they need on first run, so nothing needs setting up by hand in the
+UI.
 
 <img src="docs/img/pipeline.svg" alt="The deploy action ensures a Komodo Build, runs and polls it, resolves an IMAGE_TAG, ensures a Stack, then deploys and polls it. The image and container land on the Komodo server." width="850">
 
 ## `deploy`
 
-Ensures a Komodo `Build` and `Stack` exist, builds the given branch, and deploys the resulting image. The Stack's
-`environment` is automatically prefixed with `IMAGE_TAG=<build commit hash>` (falling back to `commit-sha`, then
-`latest`) — don't include `IMAGE_TAG` yourself in the `environment` input.
+Ensures a Komodo `Build` and `Stack` exist, builds the given branch, deploys the image. The Stack's
+`environment` is prefixed with `IMAGE_TAG=<build commit hash>` (falling back to `commit-sha`, then
+`latest`) — don't pass `IMAGE_TAG` yourself.
 
 ```yaml
 - id: deploy-context
@@ -39,8 +40,8 @@ Ensures a Komodo `Build` and `Stack` exist, builds the given branch, and deploys
 
 ### Where each input lands
 
-Most inputs map straight onto a field of the Komodo `Build` or `Stack` config. Four of them — `server`, `repo`,
-`branch` and `git-provider` — are written to both.
+Most inputs map onto one field of the Komodo `Build` or `Stack`. Four — `server`, `repo`, `branch`
+and `git-provider` — go to both.
 
 <img src="docs/img/io.svg" alt="The fifteen deploy inputs grouped by role, and the Komodo Build config, Stack config and commit-hash output they are written to." width="850">
 
@@ -64,9 +65,9 @@ Most inputs map straight onto a field of the Komodo `Build` or `Stack` config. F
 | `git-provider`        | no       | Default `github.com`                                                 |
 | `commit-sha`          | no       | Fallback image tag if the Build's commit hash isn't available        |
 
-Some config is fixed by the action and not exposed: the Build sets `include_commit_tag`, and clears the latest and
-version tags; the Stack disables `auto_pull` and `destroy_before_deploy`. Both disable Komodo webhooks, because the
-workflow is what triggers a deploy.
+Fixed by the action, not exposed: the Build sets `include_commit_tag` and clears the latest and
+version tags; the Stack disables `auto_pull` and `destroy_before_deploy`. Both disable Komodo
+webhooks, since the workflow is what triggers a deploy.
 
 ### Outputs
 
@@ -76,8 +77,8 @@ workflow is what triggers a deploy.
 
 ### `IMAGE_TAG`
 
-The image is only ever published under its commit tag, so your compose file needs to be told which tag was just
-built. The action resolves that itself and prepends it to the environment block you passed in.
+The image is only published under its commit tag, so the compose file must be told which tag was just
+built. The action resolves that and prepends it to your environment block.
 
 <img src="docs/img/image-tag.svg" alt="IMAGE_TAG is resolved from the first non-empty of the build commit hash, the commit-sha input, or the literal latest, then prepended as line one of the Stack environment, and read back by the compose file." width="850">
 
@@ -89,13 +90,13 @@ services:
     image: brockcsc-ca:${IMAGE_TAG}
 ```
 
-Pass every other variable through `environment` freely — nothing else in the block is rewritten.
+Everything else in the block passes through untouched.
 
 ## `ensure-action`
 
-Registers or updates a Komodo `Action` resource from a local script file, for logic that needs to run inside Komodo
-(e.g. network access to a private docker network CI runners can't reach). This action only registers the script; it
-never runs it.
+Registers or updates a Komodo `Action` from a local script, for logic that must run inside Komodo —
+reaching a private docker network CI runners can't, say. It only registers the script; it never runs
+it.
 
 <img src="docs/img/ensure-action.svg" alt="ensure-action reads a TypeScript file from the checkout, builds an Action config from its contents and the schedule inputs, then upserts a Komodo Action resource." width="850">
 
@@ -126,8 +127,8 @@ never runs it.
 
 ## When a run fails
 
-Neither action points you at the Komodo UI. If a build or deploy fails, every Komodo log line is printed into the
-workflow run, grouped by stage, before the step exits non-zero.
+Neither action sends you to the Komodo UI: every Komodo log line is printed into the workflow run,
+grouped by stage, before the step exits non-zero.
 
 ## Contributing
 
