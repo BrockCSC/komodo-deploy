@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="772" viewBox="0 0 850 772" role="img" aria-labelledby="ttl desc">
+  <title id="ttl">deploy action inputs and where each one lands in Komodo</title>
+  <desc id="desc">The fifteen inputs of the deploy action, grouped by role: connection, shared by build and stack, build only, stack only, and fallback. On the right, the Komodo config objects the action writes: the KomodoClient authentication, the Build config, the Stack config, and the single commit-hash output. A fourth card lists the config values the action fixes and does not expose as inputs.</desc>
+
+  <style><![CDATA[
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .m { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; fill: #c05a54; }
+    .title   { font-size: 25px; font-weight: 800; fill: #c05a54; letter-spacing: -0.3px; }
+    .sub     { font-size: 13px; fill: #96969f; }
+    .grp     { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; fill: #c05a54; }
+    .panel   { fill: #80808f; fill-opacity: 0.05; stroke: #8a8a94; stroke-width: 1.5; }
+    .card    { fill: #80808f; fill-opacity: 0.07; stroke: #8a8a94; stroke-width: 1.5; }
+    .shadow  { fill: #8a8a94; fill-opacity: 0.20; }
+    .chip    { fill: #c05a54; fill-opacity: 0.09; stroke: #c05a54; stroke-width: 1; stroke-opacity: 0.45; }
+    .h       { font-size: 13.5px; font-weight: 700; fill: #82828c; }
+    .k       { font-size: 12px; fill: #8a8a94; }
+    .v       { font-size: 12px; font-weight: 700; fill: #c05a54; }
+    .note    { font-size: 11px; fill: #96969f; }
+    .opt     { font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; fill: #96969f; }
+    .conn    { stroke: #8a8a94; stroke-width: 1.6; fill: none; stroke-opacity: 0.8; }
+    .flow    { stroke: #c05a54; stroke-width: 2.2; fill: none; stroke-dasharray: 7 9; stroke-linecap: round;
+               animation: flow 1.8s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -32; } }
+    @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+  ]]></style>
+
+  <text class="eyebrow" x="24" y="34">KOMODO-DEPLOY  ·  DEPLOY</text>
+  <text class="title" x="24" y="64">Fifteen inputs, two resources</text>
+  <text class="sub" x="24" y="88">Most inputs map straight onto a Komodo config field. Four of them are written into both the Build and the Stack.</text>
+
+  <!-- ── left panel ───────────────────────────────────────── -->
+  <rect class="panel" x="24" y="126" width="300" height="590" rx="12"/>
+  <text class="h" x="40" y="148">Action inputs</text>
+
+  <text class="grp" x="40" y="176">CONNECTION</text>
+  <rect class="chip" x="40" y="184" width="268" height="21" rx="6"/><text class="k m" x="50" y="199">komodo-host</text>
+  <rect class="chip" x="40" y="209" width="268" height="21" rx="6"/><text class="k m" x="50" y="224">komodo-api-key</text>
+  <rect class="chip" x="40" y="234" width="268" height="21" rx="6"/><text class="k m" x="50" y="249">komodo-api-secret</text>
+
+  <text class="grp" x="40" y="283">SHARED — WRITTEN TO BUILD <tspan class="note">and</tspan> STACK</text>
+  <rect class="chip" x="40" y="291" width="268" height="21" rx="6"/><text class="k m" x="50" y="306">server</text>
+  <rect class="chip" x="40" y="316" width="268" height="21" rx="6"/><text class="k m" x="50" y="331">repo</text>
+  <rect class="chip" x="40" y="341" width="268" height="21" rx="6"/><text class="k m" x="50" y="356">branch</text>
+  <rect class="chip" x="40" y="366" width="268" height="21" rx="6"/><text class="k m" x="50" y="381">git-provider</text><text class="opt" x="250" y="381">OPTIONAL</text>
+
+  <text class="grp" x="40" y="415">BUILD ONLY</text>
+  <rect class="chip" x="40" y="423" width="268" height="21" rx="6"/><text class="k m" x="50" y="438">build-name</text>
+  <rect class="chip" x="40" y="448" width="268" height="21" rx="6"/><text class="k m" x="50" y="463">build-path</text>
+  <rect class="chip" x="40" y="473" width="268" height="21" rx="6"/><text class="k m" x="50" y="488">dockerfile-path</text>
+  <rect class="chip" x="40" y="498" width="268" height="21" rx="6"/><text class="k m" x="50" y="513">image-name</text>
+
+  <text class="grp" x="40" y="547">STACK ONLY</text>
+  <rect class="chip" x="40" y="555" width="268" height="21" rx="6"/><text class="k m" x="50" y="570">stack-name</text>
+  <rect class="chip" x="40" y="580" width="268" height="21" rx="6"/><text class="k m" x="50" y="595">compose-file-paths</text>
+  <rect class="chip" x="40" y="605" width="268" height="21" rx="6"/><text class="k m" x="50" y="620">environment</text>
+
+  <text class="grp" x="40" y="654">IMAGE TAG FALLBACK</text>
+  <rect class="chip" x="40" y="662" width="268" height="21" rx="6"/><text class="k m" x="50" y="677">commit-sha</text><text class="opt" x="250" y="677">OPTIONAL</text>
+
+  <!-- ── connectors ───────────────────────────────────────── -->
+  <path class="conn" d="M324 220 Q412 220 412 176 Q412 152 500 152"/>
+  <path class="flow" d="M324 400 Q430 400 430 330 Q430 262 500 262"/>
+  <path class="flow" d="M324 460 Q446 460 446 520 Q446 566 500 566"/>
+  <path class="conn" d="M324 672 Q420 672 420 690 Q420 706 500 706"/>
+
+  <!-- ── right: client ────────────────────────────────────── -->
+  <rect class="shadow" x="505" y="131" width="321" height="46" rx="10"/>
+  <rect class="card"   x="500" y="126" width="321" height="46" rx="10"/>
+  <text class="h" x="516" y="146">KomodoClient</text>
+  <text class="note m" x="516" y="164">type: api-key</text>
+
+  <!-- ── right: build config ──────────────────────────────── -->
+  <rect class="shadow" x="505" y="203" width="321" height="212" rx="10"/>
+  <rect class="card"   x="500" y="198" width="321" height="212" rx="10"/>
+  <text class="h" x="516" y="220">Build config</text>
+  <text class="note" x="600" y="220">GetBuild → Update / Create</text>
+  <text class="k m" x="516" y="248">builder:</text>          <text class="v m" x="640" y="248">server</text>
+  <text class="k m" x="516" y="270">git_provider:</text>     <text class="v m" x="640" y="270">git-provider</text>
+  <text class="k m" x="516" y="292">repo:</text>             <text class="v m" x="640" y="292">repo</text>
+  <text class="k m" x="516" y="314">branch:</text>           <text class="v m" x="640" y="314">branch</text>
+  <text class="k m" x="516" y="336">build_path:</text>       <text class="v m" x="640" y="336">build-path</text>
+  <text class="k m" x="516" y="358">dockerfile_path:</text>  <text class="v m" x="640" y="358">dockerfile-path</text>
+  <text class="k m" x="516" y="380">image_name:</text>       <text class="v m" x="640" y="380">image-name</text>
+  <text class="note" x="516" y="400">name comes from build-name</text>
+
+  <!-- ── right: stack config ──────────────────────────────── -->
+  <rect class="shadow" x="505" y="441" width="321" height="190" rx="10"/>
+  <rect class="card"   x="500" y="436" width="321" height="190" rx="10"/>
+  <text class="h" x="516" y="458">Stack config</text>
+  <text class="note" x="600" y="458">GetStack → Update / Create</text>
+  <text class="k m" x="516" y="486">server:</text>           <text class="v m" x="640" y="486">server</text>
+  <text class="k m" x="516" y="508">repo / branch:</text>    <text class="v m" x="640" y="508">repo, branch</text>
+  <text class="k m" x="516" y="530">git_provider:</text>     <text class="v m" x="640" y="530">git-provider</text>
+  <text class="k m" x="516" y="552">file_paths:</text>       <text class="v m" x="640" y="552">compose-file-paths</text>
+  <text class="note" x="640" y="568">split on commas</text>
+  <text class="k m" x="516" y="590">environment:</text>      <text class="v m" x="640" y="590">IMAGE_TAG + environment</text>
+  <text class="note" x="516" y="610">name comes from stack-name</text>
+
+  <!-- ── right: output ────────────────────────────────────── -->
+  <rect class="shadow" x="505" y="657" width="321" height="60" rx="10"/>
+  <rect class="card"   x="500" y="652" width="321" height="60" rx="10"/>
+  <text class="h" x="516" y="674">Output</text>
+  <text class="v m" x="516" y="696">commit-hash</text>
+  <text class="note" x="620" y="696">may be empty if Komodo omits it</text>
+
+  <text class="note" x="24" y="740">Fixed by the action, not exposed as inputs — Build: include_commit_tag on, latest and version tags off. Stack: auto_pull off,</text>
+  <text class="note" x="24" y="757">destroy_before_deploy off. Both: webhook_enabled off, because the workflow is what triggers a deploy.</text>
+</svg>
