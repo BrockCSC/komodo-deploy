@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="392" viewBox="0 0 850 392" role="img" aria-labelledby="ttl desc">
+  <title id="ttl">How ensure-action uploads a script into Komodo</title>
+  <desc id="desc">The ensure-action action reads a TypeScript file from the caller's checkout, builds a Komodo Action config from its contents plus the optional schedule inputs, then calls GetAction and either UpdateAction or CreateAction. The result is a Komodo Action resource that runs inside Komodo rather than on the GitHub runner.</desc>
+
+  <style><![CDATA[
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .m { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; fill: #c05a54; }
+    .title   { font-size: 25px; font-weight: 800; fill: #c05a54; letter-spacing: -0.3px; }
+    .sub     { font-size: 13px; fill: #96969f; }
+    .card    { fill: #80808f; fill-opacity: 0.07; stroke: #8a8a94; stroke-width: 1.5; }
+    .shadow  { fill: #8a8a94; fill-opacity: 0.20; }
+    .h       { font-size: 13.5px; font-weight: 700; fill: #82828c; }
+    .code    { font-size: 12px; fill: #8a8a94; }
+    .hot     { font-size: 12px; font-weight: 700; fill: #c05a54; }
+    .note    { font-size: 11.5px; fill: #96969f; }
+    .lane    { font-size: 10.5px; font-weight: 700; letter-spacing: 1.3px; fill: #96969f; }
+    .flow    { stroke: #c05a54; stroke-width: 2.2; fill: none; stroke-dasharray: 7 9; stroke-linecap: round;
+               animation: flow 1.7s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -32; } }
+    @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+  ]]></style>
+
+  <text class="eyebrow" x="24" y="34">KOMODO-DEPLOY  ·  ENSURE-ACTION</text>
+  <text class="title" x="24" y="64">Shipping a script Komodo runs itself</text>
+  <text class="sub" x="24" y="88">For work that has to happen inside Komodo's network, where a GitHub runner cannot reach.</text>
+
+  <text class="lane" x="24"  y="122">YOUR CHECKOUT</text>
+  <text class="lane" x="300" y="122">THE ACTION</text>
+  <text class="lane" x="576" y="122">KOMODO</text>
+  <line x1="24" y1="132" x2="826" y2="132" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.45"/>
+
+  <!-- ── col 1 ────────────────────────────────────────────── -->
+  <rect class="shadow" x="29" y="155" width="245" height="128" rx="10"/>
+  <rect class="card"   x="24" y="150" width="245" height="128" rx="10"/>
+  <text class="h" x="40" y="174">A file in your repo</text>
+  <text class="code m" x="40" y="200">komodo/actions/sweep.ts</text>
+  <text class="note" x="40" y="226">Resolved against GITHUB_WORKSPACE</text>
+  <text class="note" x="40" y="243">and read as UTF-8 text. Nothing is</text>
+  <text class="note" x="40" y="260">compiled or bundled on the runner.</text>
+
+  <path class="flow" d="M269 214 L296 214"/>
+  <polygon points="302,214 290,208 290,220" fill="#c05a54"/>
+
+  <!-- ── col 2 ────────────────────────────────────────────── -->
+  <rect class="shadow" x="305" y="155" width="245" height="188" rx="10"/>
+  <rect class="card"   x="300" y="150" width="245" height="188" rx="10"/>
+  <text class="h" x="316" y="174">Action config</text>
+  <text class="code m" x="316" y="200">file_contents:</text><text class="hot m" x="424" y="200">the script</text>
+  <text class="code m" x="316" y="222">schedule:</text><text class="hot m" x="424" y="222">schedule</text>
+  <text class="code m" x="316" y="244">schedule_format:</text>
+  <text class="hot m" x="316" y="262">schedule-format</text><text class="note" x="424" y="262">default English</text>
+  <text class="code m" x="316" y="284">schedule_enabled:</text>
+  <text class="hot m" x="316" y="302">schedule-enabled</text><text class="note" x="440" y="302">default false</text>
+  <text class="note" x="316" y="326">webhook_enabled is always false</text>
+
+  <path class="flow" d="M545 214 L572 214"/>
+  <polygon points="578,214 566,208 566,220" fill="#c05a54"/>
+
+  <!-- ── col 3 ────────────────────────────────────────────── -->
+  <rect class="shadow" x="581" y="155" width="245" height="188" rx="10"/>
+  <rect class="card"   x="576" y="150" width="245" height="188" rx="10"/>
+  <text class="h" x="592" y="174">Action resource</text>
+  <text class="hot m" x="592" y="200">GetAction</text>
+  <text class="code m" x="592" y="224">found →</text><text class="code m" x="664" y="224">UpdateAction</text>
+  <text class="code m" x="592" y="246">missing →</text><text class="code m" x="664" y="246">CreateAction</text>
+  <line x1="592" y1="264" x2="810" y2="264" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.4"/>
+  <text class="note" x="592" y="286">Same upsert shape as Build and</text>
+  <text class="note" x="592" y="303">Stack in the deploy action.</text>
+  <text class="note" x="592" y="326">This action only registers; it never runs it.</text>
+
+  <text class="note" x="24" y="372">Re-running the workflow overwrites file_contents, so the Komodo Action always matches the script on main.</text>
+</svg>

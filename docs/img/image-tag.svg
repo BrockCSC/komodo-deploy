@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="646" viewBox="0 0 850 646" role="img" aria-labelledby="ttl desc">
+  <title id="ttl">How IMAGE_TAG is resolved and injected into the Stack environment</title>
+  <desc id="desc">The action picks an image tag from the first non-empty of three sources: the commit hash Komodo reports from the build, then the optional commit-sha input, then the literal string latest. It prepends that as an IMAGE_TAG line above the environment block you passed in, and writes the combined string to the Stack config. Your compose file reads it back as a variable. Do not declare IMAGE_TAG yourself.</desc>
+
+  <style><![CDATA[
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .m { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; fill: #c05a54; }
+    .title   { font-size: 25px; font-weight: 800; fill: #c05a54; letter-spacing: -0.3px; }
+    .sub     { font-size: 13px; fill: #96969f; }
+    .card    { fill: #80808f; fill-opacity: 0.07; stroke: #8a8a94; stroke-width: 1.5; }
+    .shadow  { fill: #8a8a94; fill-opacity: 0.20; }
+    .h       { font-size: 13.5px; font-weight: 700; fill: #82828c; }
+    .code    { font-size: 12.5px; fill: #8a8a94; }
+    .hot     { font-size: 12.5px; font-weight: 700; fill: #c05a54; }
+    .note    { font-size: 11.5px; fill: #96969f; }
+    .rank    { font-size: 15px; font-weight: 800; fill: #c05a54; }
+    .inj     { fill: #c05a54; fill-opacity: 0.13; stroke: #c05a54; stroke-width: 1.2; stroke-opacity: 0.6; }
+    .conn    { stroke: #8a8a94; stroke-width: 1.8; fill: none; }
+    .flow    { stroke: #c05a54; stroke-width: 2.2; fill: none; stroke-dasharray: 7 9; stroke-linecap: round;
+               animation: flow 1.6s linear infinite; }
+    .beat    { animation: beat 2.4s ease-in-out infinite; }
+    @keyframes flow { to { stroke-dashoffset: -32; } }
+    @keyframes beat { 0%,70%,100% { opacity: 1; } 85% { opacity: 0.45; } }
+    @media (prefers-reduced-motion: reduce) {
+      .flow { animation: none; }
+      .beat { animation: none; }
+    }
+  ]]></style>
+
+  <text class="eyebrow" x="24" y="34">KOMODO-DEPLOY  ·  IMAGE_TAG</text>
+  <text class="title" x="24" y="64">The one variable the action writes for you</text>
+  <text class="sub" x="24" y="88">Your compose file needs to know which tag was just built. The action resolves it and prepends it — so you must not.</text>
+
+  <!-- ── ladder ───────────────────────────────────────────── -->
+  <rect class="shadow" x="29" y="131" width="371" height="228" rx="12"/>
+  <rect class="card"   x="24" y="126" width="371" height="228" rx="12"/>
+  <text class="h" x="40" y="150">1 · Resolve — first non-empty wins</text>
+
+  <rect class="inj beat" x="40" y="164" width="339" height="52" rx="8"/>
+  <text class="rank" x="54" y="186">1</text>
+  <text class="hot m" x="76" y="186">buildUpdate.commit_hash</text>
+  <text class="note" x="76" y="204">the commit Komodo reports from the build it just ran</text>
+
+  <rect class="card" x="40" y="224" width="339" height="52" rx="8"/>
+  <text class="rank" x="54" y="246">2</text>
+  <text class="code m" x="76" y="246">commit-sha</text>
+  <text class="note" x="164" y="246">— optional input</text>
+  <text class="note" x="76" y="264">usually github.sha, used when Komodo returns nothing</text>
+
+  <rect class="card" x="40" y="284" width="339" height="52" rx="8"/>
+  <text class="rank" x="54" y="306">3</text>
+  <text class="code m" x="76" y="306">"latest"</text>
+  <text class="note" x="76" y="324">literal last resort — the Build does not push a latest tag</text>
+
+  <!-- ── connector ────────────────────────────────────────── -->
+  <path class="flow" d="M395 240 L455 240"/>
+  <polygon points="461,240 449,234 449,246" fill="#c05a54"/>
+
+  <!-- ── result ───────────────────────────────────────────── -->
+  <rect class="shadow" x="466" y="131" width="371" height="228" rx="12"/>
+  <rect class="card"   x="461" y="126" width="371" height="228" rx="12"/>
+  <text class="h" x="477" y="150">2 · Prepend to your environment</text>
+
+  <rect class="inj" x="477" y="164" width="339" height="26" rx="6"/>
+  <text class="hot m" x="489" y="182">IMAGE_TAG=a1b2c3d</text>
+  <text class="note" x="672" y="182">← injected line 1</text>
+
+  <text class="code m" x="489" y="212">DATABASE_URL=postgres://…</text>
+  <text class="code m" x="489" y="234">NODE_ENV=production</text>
+  <text class="code m" x="489" y="256">PUBLIC_URL=https://example.org</text>
+  <path class="conn" d="M481 198 L481 266" stroke-opacity="0.5"/>
+  <text class="note" x="489" y="288">your environment input, passed through verbatim</text>
+
+  <text class="note" x="477" y="322">The joined string becomes the Stack's environment field, which</text>
+  <text class="note" x="477" y="339">Komodo hands to compose when it deploys.</text>
+
+  <!-- ── consumption ──────────────────────────────────────── -->
+  <path class="flow" d="M646 359 L646 391"/>
+  <polygon points="646,397 640,385 652,385" fill="#c05a54"/>
+
+  <rect class="shadow" x="466" y="403" width="371" height="112" rx="12"/>
+  <rect class="card"   x="461" y="398" width="371" height="112" rx="12"/>
+  <text class="h" x="477" y="422">3 · Your compose file reads it back</text>
+  <text class="code m" x="477" y="450">services:</text>
+  <text class="code m" x="493" y="470">app:</text>
+  <text class="code m" x="509" y="490">image: image-name:</text>
+  <text class="hot m" x="643" y="490">${IMAGE_TAG}</text>
+
+  <!-- ── warning ──────────────────────────────────────────── -->
+  <rect class="shadow" x="29" y="403" width="371" height="112" rx="12"/>
+  <rect x="24" y="398" width="371" height="112" rx="12" fill="#c05a54" fill-opacity="0.10" stroke="#c05a54" stroke-width="1.8"/>
+  <text class="hot" x="40" y="422" font-size="13.5">Do not set IMAGE_TAG in environment</text>
+  <text class="note" x="40" y="446">The action always writes its own line above yours, so a second</text>
+  <text class="note" x="40" y="463">declaration leaves the key defined twice and which one survives</text>
+  <text class="note" x="40" y="480">is left to compose. Pass every other variable freely — nothing</text>
+  <text class="note" x="40" y="497">else in the block is rewritten.</text>
+
+  <!-- ── footnote ─────────────────────────────────────────── -->
+  <line x1="24" y1="548" x2="826" y2="548" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.4"/>
+  <text class="note" x="24" y="572">The Build is configured with include_commit_tag on and include_latest_tag off, so the image is only ever published under</text>
+  <text class="note" x="24" y="589">its commit tag. That is why tier 3 is a genuine last resort rather than a working default.</text>
+  <text class="note" x="24" y="618">The environment input is a required multiline KEY=VALUE block. Pass an empty-ish placeholder if your stack needs nothing.</text>
+</svg>

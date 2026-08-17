@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="784" viewBox="0 0 850 784" role="img" aria-labelledby="ttl desc">
+  <title id="ttl">How the deploy action runs: ensure, then execute</title>
+  <desc id="desc">The deploy action runs on a GitHub runner. It reconciles a Komodo Build (GetBuild, then UpdateBuild or CreateBuild), runs the build and polls it, resolves an IMAGE_TAG from the build commit hash, reconciles a Komodo Stack (GetStack, then UpdateStack or CreateStack), deploys the stack and polls it, then writes the commit-hash output. The image and the running container land on the Komodo server.</desc>
+
+  <style><![CDATA[
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .m { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; fill: #c05a54; }
+    .title   { font-size: 25px; font-weight: 800; fill: #c05a54; letter-spacing: -0.3px; }
+    .sub     { font-size: 13px; fill: #96969f; }
+    .lane    { font-size: 10.5px; font-weight: 700; letter-spacing: 1.3px; fill: #96969f; }
+    .h       { font-size: 14px; font-weight: 700; fill: #82828c; }
+    .code    { font-size: 12.5px; fill: #8a8a94; }
+    .codeb   { font-size: 12.5px; font-weight: 700; fill: #c05a54; }
+    .note    { font-size: 11.5px; fill: #96969f; }
+    .num     { font-size: 11px; font-weight: 800; fill: #c05a54; }
+    .card    { fill: #80808f; fill-opacity: 0.07; stroke: #8a8a94; stroke-width: 1.5; }
+    .shadow  { fill: #8a8a94; fill-opacity: 0.20; }
+    .pill    { fill: #c05a54; fill-opacity: 0.10; stroke: #c05a54; stroke-width: 1.1; stroke-opacity: 0.55; }
+    .conn    { stroke: #8a8a94; stroke-width: 1.8; fill: none; }
+    .flow    { stroke: #c05a54; stroke-width: 2.2; fill: none; stroke-dasharray: 7 9; stroke-linecap: round;
+               animation: flow 1.6s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -32; } }
+    @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+  ]]></style>
+
+  <!-- ── header ───────────────────────────────────────────── -->
+  <text class="eyebrow" x="24" y="34">KOMODO-DEPLOY  ·  DEPLOY</text>
+  <text class="title" x="24" y="64">Ensure, then execute</text>
+  <text class="sub" x="24" y="88">Every run reconciles the Komodo resources before it runs them — nothing has to be created by hand in the UI.</text>
+
+  <!-- ── lane headers ─────────────────────────────────────── -->
+  <text class="lane" x="24"  y="126">GITHUB RUNNER</text>
+  <text class="lane" x="300" y="126">KOMODO API</text>
+  <text class="lane" x="616" y="126">SERVER</text>
+  <line x1="24" y1="136" x2="826" y2="136" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.45"/>
+  <line x1="288" y1="142" x2="288" y2="760" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.28" stroke-dasharray="3 5"/>
+  <line x1="604" y1="142" x2="604" y2="760" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.28" stroke-dasharray="3 5"/>
+
+  <!-- ── spine ────────────────────────────────────────────── -->
+  <path class="conn" d="M170 232 L170 248 Q170 258 180 258 L296 258"/>
+  <path class="flow" d="M445 324 L445 344"/>
+  <path class="flow" d="M445 400 L445 420"/>
+  <path class="flow" d="M445 492 L445 512"/>
+  <path class="flow" d="M445 584 L445 604"/>
+  <path class="conn" d="M445 660 L445 690 Q445 700 435 700 L280 700"/>
+  <polygon points="280,700 290,695 290,705" fill="#8a8a94"/>
+
+  <!-- runner → spine arrowhead -->
+  <polygon points="300,258 290,253 290,263" fill="#8a8a94"/>
+
+  <!-- spine → server connectors -->
+  <path class="conn" d="M594 372 L616 372"/>
+  <polygon points="620,372 610,367 610,377" fill="#8a8a94"/>
+  <path class="conn" d="M594 632 L616 632"/>
+  <polygon points="620,632 610,627 610,637" fill="#8a8a94"/>
+
+  <!-- ── R1 · caller step (runner) ────────────────────────── -->
+  <rect class="shadow" x="29" y="175" width="250" height="62" rx="10"/>
+  <rect class="card"   x="24" y="170" width="250" height="62" rx="10"/>
+  <text class="num"  x="40" y="192">01</text>
+  <text class="h"    x="62" y="192">Your workflow step</text>
+  <text class="code m" x="40" y="212" font-size="11.5">…/komodo-deploy/deploy@v1</text>
+  <text class="note" x="40" y="226">npm ci  ·  node deploy.mjs</text>
+
+  <!-- ── R2 · ensure Build ────────────────────────────────── -->
+  <rect class="shadow" x="305" y="257" width="290" height="72" rx="10"/>
+  <rect class="card"   x="300" y="252" width="290" height="72" rx="10"/>
+  <text class="num" x="316" y="274">02</text>
+  <text class="h"   x="338" y="274">Ensure the Build</text>
+  <text class="codeb m" x="316" y="294">GetBuild</text>
+  <rect class="pill" x="382" y="283" width="88" height="16" rx="8"/>
+  <text class="note m" x="390" y="295">found →</text>
+  <text class="code m" x="474" y="295">UpdateBuild</text>
+  <rect class="pill" x="382" y="303" width="88" height="16" rx="8"/>
+  <text class="note m" x="390" y="315">missing →</text>
+  <text class="code m" x="474" y="315">CreateBuild</text>
+
+  <!-- ── R3 · RunBuild ────────────────────────────────────── -->
+  <rect class="shadow" x="305" y="349" width="290" height="56" rx="10"/>
+  <rect class="card"   x="300" y="344" width="290" height="56" rx="10"/>
+  <text class="num" x="316" y="366">03</text>
+  <text class="h"   x="338" y="366">Build the branch</text>
+  <text class="codeb m" x="316" y="388">RunBuild</text>
+  <text class="note" x="382" y="388">executed and polled to completion</text>
+
+  <!-- ── R3 · server: image ───────────────────────────────── -->
+  <rect class="shadow" x="621" y="349" width="205" height="56" rx="10"/>
+  <rect class="card"   x="616" y="344" width="205" height="56" rx="10"/>
+  <text class="h" x="632" y="366">Image built</text>
+  <text class="code m" x="632" y="388">image-name:&lt;commit&gt;</text>
+
+  <!-- ── R4 · IMAGE_TAG ───────────────────────────────────── -->
+  <rect class="shadow" x="305" y="425" width="290" height="72" rx="10"/>
+  <rect class="card"   x="300" y="420" width="290" height="72" rx="10"/>
+  <text class="num" x="316" y="442">04</text>
+  <text class="h"   x="338" y="442">Resolve IMAGE_TAG</text>
+  <text class="code m" x="316" y="462">commit_hash → commit-sha → latest</text>
+  <text class="note" x="316" y="482">prepended to your environment block</text>
+
+  <!-- ── R5 · ensure Stack ────────────────────────────────── -->
+  <rect class="shadow" x="305" y="517" width="290" height="72" rx="10"/>
+  <rect class="card"   x="300" y="512" width="290" height="72" rx="10"/>
+  <text class="num" x="316" y="534">05</text>
+  <text class="h"   x="338" y="534">Ensure the Stack</text>
+  <text class="codeb m" x="316" y="554">GetStack</text>
+  <rect class="pill" x="382" y="543" width="88" height="16" rx="8"/>
+  <text class="note m" x="390" y="555">found →</text>
+  <text class="code m" x="474" y="555">UpdateStack</text>
+  <rect class="pill" x="382" y="563" width="88" height="16" rx="8"/>
+  <text class="note m" x="390" y="575">missing →</text>
+  <text class="code m" x="474" y="575">CreateStack</text>
+
+  <!-- ── R6 · DeployStack ─────────────────────────────────── -->
+  <rect class="shadow" x="305" y="609" width="290" height="56" rx="10"/>
+  <rect class="card"   x="300" y="604" width="290" height="56" rx="10"/>
+  <text class="num" x="316" y="626">06</text>
+  <text class="h"   x="338" y="626">Deploy the compose stack</text>
+  <text class="codeb m" x="316" y="648">DeployStack</text>
+  <text class="note" x="416" y="648">executed and polled</text>
+
+  <!-- ── R6 · server: container ───────────────────────────── -->
+  <rect class="shadow" x="621" y="609" width="205" height="56" rx="10"/>
+  <rect class="card"   x="616" y="604" width="205" height="56" rx="10"/>
+  <text class="h" x="632" y="626">Container running</text>
+  <text class="note" x="632" y="648">from your compose file</text>
+
+  <!-- ── R7 · output ──────────────────────────────────────── -->
+  <rect class="shadow" x="29" y="681" width="250" height="52" rx="10"/>
+  <rect class="card"   x="24" y="676" width="250" height="52" rx="10"/>
+  <text class="h" x="40" y="698">Step output</text>
+  <text class="code m" x="40" y="718">commit-hash</text>
+
+  <!-- ── failure note ─────────────────────────────────────── -->
+  <text class="note" x="24" y="762">On failure either step prints the full Komodo build or deploy log into the run, grouped by stage.</text>
+</svg>

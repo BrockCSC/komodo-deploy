@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="628" viewBox="0 0 850 628" role="img" aria-labelledby="ttl desc">
+  <title id="ttl">Repository layout of komodo-deploy</title>
+  <desc id="desc">The repository holds two composite actions, deploy and ensure-action, each a directory containing an action.yml manifest and a Node script. A single package.json and package-lock.json sit at the repository root and are shared by both actions, which install them by pointing npm ci one level up from the action directory.</desc>
+
+  <style><![CDATA[
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .m { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; fill: #c05a54; }
+    .title   { font-size: 25px; font-weight: 800; fill: #c05a54; letter-spacing: -0.3px; }
+    .sub     { font-size: 13px; fill: #96969f; }
+    .card    { fill: #80808f; fill-opacity: 0.07; stroke: #8a8a94; stroke-width: 1.5; }
+    .panel   { fill: #80808f; fill-opacity: 0.05; stroke: #8a8a94; stroke-width: 1.5; }
+    .shadow  { fill: #8a8a94; fill-opacity: 0.20; }
+    .h       { font-size: 13.5px; font-weight: 700; fill: #82828c; }
+    .dir     { font-size: 13px; font-weight: 700; fill: #c05a54; }
+    .file    { font-size: 13px; fill: #8a8a94; }
+    .note    { font-size: 11.5px; fill: #96969f; }
+    .lane    { font-size: 10.5px; font-weight: 700; letter-spacing: 1.3px; fill: #96969f; }
+    .tw      { stroke: #8a8a94; stroke-width: 1.2; fill: none; stroke-opacity: 0.55; }
+    .flow    { stroke: #c05a54; stroke-width: 2; fill: none; stroke-dasharray: 6 8; stroke-linecap: round;
+               animation: flow 1.8s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -28; } }
+    @media (prefers-reduced-motion: reduce) { .flow { animation: none; } }
+  ]]></style>
+
+  <text class="eyebrow" x="24" y="34">KOMODO-DEPLOY  ·  CONTRIBUTING</text>
+  <text class="title" x="24" y="64">Two actions, one dependency root</text>
+  <text class="sub" x="24" y="88">Each action is a directory GitHub can resolve as <tspan class="m">owner/repo/&lt;dir&gt;@ref</tspan>. Everything else is shared.</text>
+
+  <!-- ── tree panel ───────────────────────────────────────── -->
+  <rect class="panel" x="24" y="126" width="452" height="392" rx="12"/>
+  <text class="lane" x="40" y="150">REPOSITORY</text>
+
+  <text class="dir m" x="40" y="180">komodo-deploy/</text>
+
+  <!-- deploy -->
+  <path class="tw" d="M52 190 L52 220 L70 220"/>
+  <text class="dir m" x="76" y="225">deploy/</text>
+  <text class="note" x="176" y="225">published as <tspan class="m">/deploy@v1</tspan></text>
+  <path class="tw" d="M88 232 L88 256 L106 256"/>
+  <text class="file m" x="112" y="261">action.yml</text>
+  <text class="note" x="230" y="261">inputs → env vars</text>
+  <path class="tw" d="M88 232 L88 288 L106 288"/>
+  <text class="file m" x="112" y="293">deploy.mjs</text>
+  <text class="note" x="230" y="293">Build + Stack upsert, run, poll</text>
+
+  <!-- ensure-action -->
+  <path class="tw" d="M52 190 L52 324 L70 324"/>
+  <text class="dir m" x="76" y="329">ensure-action/</text>
+  <text class="note" x="200" y="329">published as <tspan class="m">/ensure-action@v1</tspan></text>
+  <path class="tw" d="M88 336 L88 360 L106 360"/>
+  <text class="file m" x="112" y="365">action.yml</text>
+  <path class="tw" d="M88 336 L88 392 L106 392"/>
+  <text class="file m" x="112" y="397">ensure-action.mjs</text>
+  <text class="note" x="260" y="397">Action upsert</text>
+
+  <!-- root files -->
+  <path class="tw" d="M52 190 L52 428 L70 428"/>
+  <text class="file m" x="76" y="433">package.json</text>
+  <text class="note" x="220" y="433">one dependency: <tspan class="m">komodo_client</tspan></text>
+  <path class="tw" d="M52 190 L52 460 L70 460"/>
+  <text class="file m" x="76" y="465">package-lock.json</text>
+  <text class="note" x="220" y="465">commit it — <tspan class="m">npm ci</tspan> needs it</text>
+  <path class="tw" d="M52 190 L52 492 L70 492"/>
+  <text class="file m" x="76" y="497">.gitignore</text>
+
+  <!-- ── the shared-root arrows ───────────────────────────── -->
+  <path class="flow" d="M356 256 Q392 256 392 342 Q392 428 356 428"/>
+  <path class="flow" d="M356 360 Q380 360 380 400 Q380 428 356 428"/>
+
+  <!-- ── side notes ───────────────────────────────────────── -->
+  <rect class="shadow" x="505" y="131" width="321" height="166" rx="12"/>
+  <rect class="card"   x="500" y="126" width="321" height="166" rx="12"/>
+  <text class="h" x="516" y="150">Why the arrows point up</text>
+  <text class="note" x="516" y="176">Both manifests run</text>
+  <text class="file m" x="516" y="196" font-size="12">npm ci --prefix</text>
+  <text class="file m" x="516" y="214" font-size="12">"$&#123;&#123; github.action_path &#125;&#125;/.."</text>
+  <text class="note" x="516" y="238">so the install lands at the repo root, not</text>
+  <text class="note" x="516" y="255">inside the action directory. Adding a</text>
+  <text class="note" x="516" y="272">second package.json under an action</text>
+  <text class="note" x="516" y="289">directory would be ignored.</text>
+
+  <rect class="shadow" x="505" y="321" width="321" height="140" rx="12"/>
+  <rect class="card"   x="500" y="316" width="321" height="140" rx="12"/>
+  <text class="h" x="516" y="340">Shape of every script</text>
+  <text class="note" x="516" y="366">Both <tspan class="m">.mjs</tspan> files open with the same</text>
+  <text class="note" x="516" y="383">localStorage shim, because komodo_client</text>
+  <text class="note" x="516" y="400">imports a browser auth helper at load</text>
+  <text class="note" x="516" y="417">time. Keep it above the dynamic</text>
+  <text class="note" x="516" y="434">import — a static import would run first</text>
+  <text class="note" x="516" y="451">and throw.</text>
+
+  <!-- ── footer ───────────────────────────────────────────── -->
+  <line x1="24" y1="552" x2="826" y2="552" stroke="#8a8a94" stroke-width="1" stroke-opacity="0.4"/>
+  <text class="note" x="24" y="576">Adding an action means a new top-level directory with an <tspan class="m">action.yml</tspan> and a script, plus a section in the README.</text>
+  <text class="note" x="24" y="596">There is no build step and no test runner: what is committed is what runs.</text>
+  <text class="note" x="24" y="616">Consumers pin a tag, so a breaking input change needs a new major tag rather than a force-push.</text>
+</svg>
